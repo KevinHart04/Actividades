@@ -10,7 +10,7 @@ class Personajes:
     def __str__(self):
         return color.color(f"| {self.nombre:<35} | {self.apariciones:^15} |", color.MAGENTA)
 
-# Diccionario de personajes (como ya lo tenías)
+# - Esta hecho con random para que cada vez que se ejecute el programa, los personajes tengan un número diferente de apariciones.
 mcu_characters = {
     "Vengadores": [
         "Iron Man", "Capitán América (Steve Rogers)", "Thor", "Hulk",
@@ -46,7 +46,7 @@ mcu_characters = {
     ]
 }
 
-# Función para crear la pila
+
 def crear_pila_personajes():
     pila = stack.Stack()
     for grupo, personajes in mcu_characters.items():
@@ -55,7 +55,6 @@ def crear_pila_personajes():
             pila.push(Personajes(personaje, apariciones))
     return pila
 
-# Función para encontrar las posiciones de Groot y Rocket
 def groot_and_rocket_position(pila: stack.Stack):
     aux = stack.Stack()
     pos = 0
@@ -77,7 +76,7 @@ def groot_and_rocket_position(pila: stack.Stack):
         
     return groot_pos, rocket_pos
 
-# Función para obtener personajes con más de 5 apariciones
+
 def more_than_5_appearances(pila: stack.Stack):
     pila_de_5 = stack.Stack()
     aux = stack.Stack()
@@ -90,7 +89,6 @@ def more_than_5_appearances(pila: stack.Stack):
         pila.push(aux.pop())
     return pila_de_5
 
-# Función para encontrar las apariciones de Viuda Negra
 def viuda_negra_apariciones(pila: stack.Stack):
     viuda_negra = 0
     aux = stack.Stack()
@@ -103,7 +101,6 @@ def viuda_negra_apariciones(pila: stack.Stack):
         pila.push(aux.pop())
     return viuda_negra
 
-# Función para obtener personajes cuyo nombre comienza con C, D o G
 def c_d_g_names(pila: stack.Stack):
     pila_aux = stack.Stack()
     while pila.size() > 0:
@@ -112,13 +109,13 @@ def c_d_g_names(pila: stack.Stack):
             pila_aux.push(personaje)
     return pila_aux
 
-# Función principal
+
 def main():
     pila = crear_pila_personajes()
     print(color.color('\n[*] Personajes y sus apariciones:\n', color.AZUL))
     print(color.color(f"| {'Nombre':<35} | {'Apariciones':^15} |", color.AMARILLO))
     
-    # Imprimir la pila de personajes
+    
     for i in range(pila.size()):
         print(f'{i} {pila.show()}')
     
