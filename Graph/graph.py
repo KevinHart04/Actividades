@@ -10,6 +10,13 @@ class Graph(List):
     class __nodeVertex:
 
         def __init__(self, value: Any, other_values: Optional[Any] = None):
+            """
+            Inicializa un nodo de vértice.
+
+            Args:
+                value (Any): El valor principal del vértice.
+                other_values (Optional[Any], optional): Otros valores asociados al vértice. Defaults to None.
+            """
             self.value = value
             self.edges = List()
             self.edges.add_criterion('value', Graph._order_by_value)
@@ -18,31 +25,55 @@ class Graph(List):
             self.visited = False
         
         def __str__(self):
+            """Devuelve la representación en cadena del valor del vértice."""
             return self.value
     
     class __nodeEdge:
 
         def __init__(self, value: Any, weight: Any, other_values: Optional[Any] = None):
+            """
+            Inicializa un nodo de arista.
+
+            Args:
+                value (Any): El vértice de destino de la arista.
+                weight (Any): El peso de la arista.
+                other_values (Optional[Any], optional): Otros valores asociados a la arista. Defaults to None.
+            """
             self.value = value
             self.weight = weight
             self.other_values = other_values # no esta en uso aun
         
         def __str__(self):
+            """Devuelve la representación en cadena de la arista."""
             return f'Destination: {self.value} with weight --> {self.weight}'
     
     def __init__(self, is_directed=False):
+        """
+        Inicializa el grafo.
+
+        Args:
+            is_directed (bool, optional): Indica si el grafo es dirigido. Defaults to False.
+        """
         self.add_criterion('value', self._order_by_value)
         self.is_directed = is_directed
 
     def _order_by_value(item):
+        """Criterio de ordenación para nodos basado en su valor principal."""
         return item.value
 
     def _order_by_weight(item):
+        """Criterio de ordenación para aristas basado en su peso."""
         return item.weight
     
     def show(
         self
     ) -> None:
+        """
+        Muestra la estructura del grafo en la consola.
+        
+        Itera sobre cada vértice y muestra su valor, seguido de todas sus aristas
+        y los pesos correspondientes.
+        """
         for vertex in self:
             print(f"Vertex: {vertex}")
             vertex.edges.show() 
@@ -80,6 +111,19 @@ class Graph(List):
         destination,
         key_value: str = None,
     ) -> Optional[Any]:
+        """
+        Elimina una arista entre dos vértices.
+
+        Si el grafo no es dirigido, elimina también la arista en la dirección opuesta.
+
+        Args:
+            origin (Any): El valor del vértice de origen.
+            destination (Any): El valor del vértice de destino.
+            key_value (str, optional): La clave para buscar los vértices. Defaults to None.
+
+        Returns:
+            Optional[Any]: La arista eliminada o None si no se encontró.
+        """
         pos_origin = self.search(origin, key_value)
         if pos_origin is not None:
             edge = self[pos_origin].edges.delete_value(destination, key_value)
@@ -95,6 +139,18 @@ class Graph(List):
         key_value_vertex: str = None,
         key_value_edges: str = 'value',
     ) -> Optional[Any]:
+        """
+        Elimina un vértice del grafo y todas las aristas asociadas a él.
+
+        Args:
+            value (Any): El valor del vértice a eliminar.
+            key_value_vertex (str, optional): La clave para buscar el vértice. Defaults to None.
+            key_value_edges (str, optional): La clave para buscar las aristas a eliminar. 
+                                             Defaults to 'value'.
+
+        Returns:
+            Optional[Any]: El vértice eliminado o None si no se encontró.
+        """
         delete_value = self.delete_value(value, key_value_vertex)
         if delete_value is not None:
             for vertex in self:
@@ -102,10 +158,21 @@ class Graph(List):
         return delete_value
 
     def mark_as_unvisited(self) -> None:
+        """Marca todos los vértices del grafo como no visitados."""
         for vertex in self:
             vertex.visited = False
 
     def exist_path(self, origin, destination):
+        """
+        Verifica si existe un camino entre dos vértices.
+
+        Args:
+            origin (Any): El valor del vértice de origen.
+            destination (Any): El valor del vértice de destino.
+
+        Returns:
+            bool: True si existe un camino, False en caso contrario.
+        """
         def __exist_path(graph, origin, destination):
             result = False
             vertex_pos = graph.search(origin, 'value')
@@ -128,6 +195,13 @@ class Graph(List):
         return result
     
     def deep_sweep(self, value) -> None:
+        """
+        Realiza un barrido en profundidad (DFS) del grafo desde un vértice de inicio.
+        Imprime los vértices a medida que los visita.
+
+        Args:
+            value (Any): El valor del vértice desde el que se inicia el barrido.
+        """
         def __deep_sweep(graph, value):
             vertex_pos = graph.search(value, 'value')
             if vertex_pos is not None:
@@ -143,6 +217,13 @@ class Graph(List):
         __deep_sweep(self, value)
         
     def amplitude_sweep(self, value)-> None:
+        """
+        Realiza un barrido en amplitud (BFS) del grafo desde un vértice de inicio.
+        Imprime los vértices a medida que los visita.
+
+        Args:
+            value (Any): El valor del vértice desde el que se inicia el barrido.
+        """
         queue_vertex = Queue()
         self.mark_as_unvisited()
         vertex_pos = self.search(value, 'value')
@@ -161,6 +242,18 @@ class Graph(List):
                                 queue_vertex.arrive(self[destination_edge_pos])
 
     def dijkstra(self, origin):
+        """
+        Calcula el camino más corto desde un vértice de origen a todos los demás
+        vértices del grafo utilizando el algoritmo de Dijkstra.
+
+        Args:
+            origin (Any): El valor del vértice de origen.
+
+        Returns:
+            Stack: Una pila que contiene los resultados. Cada elemento de la pila es una
+                   lista con la forma [vértice, costo_total, vértice_padre], representando
+                   el camino más corto desde el origen.
+        """
         from math import inf
         no_visited = HeapMin()
         path = Stack()
@@ -182,6 +275,19 @@ class Graph(List):
         return path
 
     def kruskal(self, origin_vertex):
+        """
+        Encuentra el Árbol de Expansión Mínima (MST) del grafo utilizando el algoritmo de Kruskal.
+
+        Args:
+            origin_vertex (Any): Un vértice de referencia para determinar a qué árbol
+                                 pertenece el resultado final en caso de un grafo no conexo.
+
+        Returns:
+            str or list: Una representación en cadena del árbol de expansión mínima que
+                         contiene al `origin_vertex`. Si el grafo es no conexo, puede devolver
+                         una lista de los árboles (bosque). La representación en cadena
+                         describe las aristas que forman el MST.
+        """
         def search_in_forest(forest, value):
             for index, tree in enumerate(forest):
                 if value in tree:

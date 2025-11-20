@@ -8,12 +8,20 @@ class List(list):
         self,
         key_criterion: str,
         function,
-    ):
+    ) -> None:
+        """
+        Agrega una función de criterio para ordenación y búsqueda.
+
+        Args:
+            key_criterion (str): El nombre clave para identificar el criterio.
+            function (function): La función lambda o regular que extrae el valor de un objeto.
+        """
         self.CRITERION_FUNCTIONS[key_criterion] = function
 
     def show(
         self
     ) -> None:
+        """Imprime cada elemento de la lista en una nueva línea."""
         for element in self:
             print(element)
 
@@ -22,6 +30,16 @@ class List(list):
         value,
         key_value: str = None,
     ) -> Optional[Any]:
+        """
+        Busca y elimina un elemento de la lista por su valor.
+
+        Args:
+            value (Any): El valor del elemento a eliminar.
+            key_value (str, optional): El criterio de búsqueda a utilizar. Defaults to None.
+
+        Returns:
+            Optional[Any]: El elemento eliminado, o None si no se encontró.
+        """
         index = self.search(value, key_value)
         return self.pop(index) if index is not None else index
 
@@ -37,6 +55,12 @@ class List(list):
         self,
         criterion_key: str = None,
     ) -> None:
+        """
+        Ordena la lista utilizando un criterio previamente definido.
+
+        Args:
+            criterion_key (str, optional): La clave del criterio a usar para la ordenación.
+        """
         criterion = self.CRITERION_FUNCTIONS.get(criterion_key)
 
         if criterion is not None:
@@ -50,7 +74,19 @@ class List(list):
         self,
         search_value,
         search_key: str = None,
-    ) -> int:
+    ) -> Optional[int]:
+        """
+        Realiza una búsqueda binaria en la lista.
+
+        La lista se ordena primero según el criterio de búsqueda si es necesario.
+
+        Args:
+            search_value (Any): El valor que se está buscando.
+            search_key (str, optional): La clave del criterio a utilizar para la búsqueda. Defaults to None.
+
+        Returns:
+            Optional[int]: El índice del elemento encontrado, o None si no se encuentra.
+        """
         self.sort_by_criterion(search_key)
         start = 0
         end = len(self) -1
@@ -69,3 +105,4 @@ class List(list):
             else:
                 end = middle -1
             middle = (start + end) // 2
+        return None
